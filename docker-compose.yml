@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  payment-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: payment-dormdeli
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SERVER_PORT=8080
+      # SePay Configuration
+      - SEPAY_API_KEY=${SEPAY_API_KEY}
+      - SEPAY_ACCOUNT_NUMBER=${SEPAY_ACCOUNT_NUMBER}
+      - SEPAY_ACCOUNT_NAME=${SEPAY_ACCOUNT_NAME}
+      - SEPAY_BANK_CODE=${SEPAY_BANK_CODE}
+      - SEPAY_WEBHOOK_URL=${SEPAY_WEBHOOK_URL}
+      # VNPay Configuration
+      - VNPAY_TMN_CODE=${VNPAY_TMN_CODE}
+      - VNPAY_HASH_SECRET=${VNPAY_HASH_SECRET}
+      - VNPAY_PAY_URL=${VNPAY_PAY_URL}
+      - VNPAY_RETURN_URL=${VNPAY_RETURN_URL}
+      # Firebase Configuration
+      - FIREBASE_CREDENTIALS_PATH=classpath:firebase-service-account.json
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/api/payment/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
