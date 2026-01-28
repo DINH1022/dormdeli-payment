@@ -9,9 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Configuration
 @Slf4j
@@ -19,11 +21,20 @@ public class FirebaseConfig {
 
     @Value("${firebase.credentials-path}")
     private String credentialsPath;
+    
+    private final ResourceLoader resourceLoader;
+    
+    public FirebaseConfig(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
 
     @Bean
     public Firestore firestore() throws IOException {
         try {
-            FileInputStream serviceAccount = new FileInputStream(credentialsPath);
+            log.info("Loading Firebase credentials from: {}", credentialsPath);
+            
+            Resource resource = resourceLoader.getResource(credentialsPath);
+            InputStream serviceAccount = resource.getInputStream();
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
