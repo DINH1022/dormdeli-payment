@@ -8,7 +8,7 @@ server:
 
 # Firebase Configuration
 firebase:
-  credentials-path: ${FIREBASE_CREDENTIALS_PATH:classpath:firebase-service-account.json}
+  credentials-path: ${FIREBASE_CREDENTIALS_PATH:/etc/secrets/firebase-service-account.json}
 
 # SePay Configuration
 sepay:

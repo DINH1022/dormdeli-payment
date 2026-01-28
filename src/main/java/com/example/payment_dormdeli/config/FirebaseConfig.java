@@ -33,7 +33,16 @@ public class FirebaseConfig {
         try {
             log.info("Loading Firebase credentials from: {}", credentialsPath);
             
-            Resource resource = resourceLoader.getResource(credentialsPath);
+            // Check if path is absolute file path or classpath
+            Resource resource;
+            if (credentialsPath.startsWith("/") || credentialsPath.contains(":")) {
+                // Absolute path or with scheme (file:, classpath:)
+                resource = resourceLoader.getResource(credentialsPath.startsWith("/") ? "file:" + credentialsPath : credentialsPath);
+            } else {
+                // Relative path, use classpath
+                resource = resourceLoader.getResource("classpath:" + credentialsPath);
+            }
+            
             InputStream serviceAccount = resource.getInputStream();
 
             FirebaseOptions options = FirebaseOptions.builder()
