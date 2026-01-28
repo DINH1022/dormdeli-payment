@@ -1,0 +1,23 @@
+package com.example.payment_dormdeli.dto;
+
+import com.example.payment_dormdeli.model.PaymentStatus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class PaymentResponse {
+    
+    private String orderId;
+    private String transactionId;
+    private String paymentUrl;
+    private PaymentStatus status;
+    private BigDecimal amount;
+    private String message;
+}
