@@ -81,6 +81,8 @@ public class VNPayPaymentService {
      * Build VNPay payment URL
      */
     private String buildPaymentUrl(PaymentRequest request, String ipAddress) throws UnsupportedEncodingException {
+        log.info("Building VNPay URL with return URL: {}", vnPayConfig.getReturnUrl());
+        
         Map<String, String> vnpParams = new HashMap<>();
         
         vnpParams.put("vnp_Version", vnPayConfig.getVersion());
