@@ -13,9 +13,9 @@ firebase:
 # SePay Configuration
 sepay:
   api-key: ${SEPAY_API_KEY}
-  account-number: ${SEPAY_ACCOUNT_NUMBER}
-  account-name: ${SEPAY_ACCOUNT_NAME}
-  bank-code: ${SEPAY_BANK_CODE}
+  account-number: ${SEPAY_ACCOUNT_NUMBER:96247801341486}
+  account-name: ${SEPAY_ACCOUNT_NAME:HONG QUOC BAO}
+  bank-code: ${SEPAY_BANK_CODE:BIDV}
   endpoint: https://my.sepay.vn/userapi/transactions/list
   webhook-url: ${SEPAY_WEBHOOK_URL}
 
