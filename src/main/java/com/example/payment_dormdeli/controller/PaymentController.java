@@ -207,11 +207,14 @@ public class PaymentController {
             ipAddress = request.getRemoteAddr();
         }
         
-        // Handle multiple IPs (take first one)
+        // Handle multiple IPs (take first one - real client IP)
         if (ipAddress != null && ipAddress.contains(",")) {
             ipAddress = ipAddress.split(",")[0].trim();
         }
         
-        return ipAddress != null ? ipAddress : "127.0.0.1";
+        String finalIp = ipAddress != null ? ipAddress : "127.0.0.1";
+        log.debug("Client IP address: {}", finalIp);
+        
+        return finalIp;
     }
 }

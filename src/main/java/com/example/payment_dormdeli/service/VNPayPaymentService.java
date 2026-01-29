@@ -97,11 +97,16 @@ public class VNPayPaymentService {
         vnpParams.put("vnp_ReturnUrl", vnPayConfig.getReturnUrl());
         vnpParams.put("vnp_IpAddr", ipAddress);
         
-        // Create date
-        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        // Create date with Vietnam timezone
+        TimeZone vnTimeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
+        Calendar cld = Calendar.getInstance(vnTimeZone);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        formatter.setTimeZone(vnTimeZone); // IMPORTANT: Set timezone for formatter
+        
         String vnpCreateDate = formatter.format(cld.getTime());
         vnpParams.put("vnp_CreateDate", vnpCreateDate);
+        
+        log.info("VNPay CreateDate: {} (Vietnam timezone)", vnpCreateDate);
         
         // Expire after 15 minutes
         cld.add(Calendar.MINUTE, 15);
