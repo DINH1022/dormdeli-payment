@@ -111,6 +111,12 @@ public class SePayPaymentService {
         try {
             log.info("Received SePay webhook: {}", transferInfo);
             
+            // Validate required fields
+            if (transferInfo.getContent() == null || transferInfo.getContent().isEmpty()) {
+                log.error("Webhook content is empty");
+                return false;
+            }
+            
             // Extract orderId from transfer content
             String orderId = extractOrderId(transferInfo.getContent());
             
@@ -133,19 +139,25 @@ public class SePayPaymentService {
                 return true;
             }
             
-            // Verify amount
-            BigDecimal transferAmount = BigDecimal.valueOf(transferInfo.getTransfer_amount());
-            if (transferAmount.compareTo(payment.getAmount()) < 0) {
-                log.error("Transfer amount {} is less than payment amount {} for order: {}", 
-                        transferAmount, payment.getAmount(), orderId);
-                payment.setStatus(PaymentStatus.FAILED);
-                payment.setErrorMessage("Insufficient amount transferred");
-                paymentRepository.save(payment);
-                return false;
+            // Check transfer amount if available
+            if (transferInfo.getTransfer_amount() != null) {
+                BigDecimal transferAmount = BigDecimal.valueOf(transferInfo.getTransfer_amount());
+                if (transferAmount.compareTo(payment.getAmount()) < 0) {
+                    log.error("Transfer amount {} is less than payment amount {} for order: {}", 
+                            transferAmount, payment.getAmount(), orderId);
+                    payment.setStatus(PaymentStatus.FAILED);
+                    payment.setErrorMessage("Insufficient amount transferred");
+                    paymentRepository.save(payment);
+                    return false;
+                }
+            } else {
+                log.warn("Transfer amount is null, skipping amount verification");
             }
             
             // Update payment
-            payment.setTransactionId(transferInfo.getReference_number());
+            payment.setTransactionId(transferInfo.getReference_number() != null ? 
+                    transferInfo.getReference_number() : 
+                    "SEPAY_" + transferInfo.getId());
             payment.setStatus(PaymentStatus.SUCCESS);
             payment.setCompletedAt(new Date());
             paymentRepository.save(payment);
